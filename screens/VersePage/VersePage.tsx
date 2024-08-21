@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, TouchableOpacity, ScrollView, StyleSheet, Text, View, Dimensions ,FlatList } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { SafeAreaView, TouchableOpacity, ScrollView, StyleSheet, Text, View, Dimensions, FlatList, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useRoute } from '@react-navigation/native';
-import SQLite from 'react-native-sqlite-storage';
+import { BibleContext } from '../context/bibleContext';
+import { Bible } from '../Components/Books';
+import Presenter from "../VerseView-Presenter/presenter"
 
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');
@@ -13,58 +15,95 @@ type VerseParams = {
     book: string;
     selected: number;
     booknumber: number;
+    limit: number;
 }
-
-const db = SQLite.openDatabase(
-    {
-        name: 'kjv.db',
-        createFromLocation: "~www/kjv.db",
-        location: 'Library'
-    },
-    () => { console.log("Connected") },
-    error => { console.log(error, "cant Connect") }
-);
+type Book = {
+    book: string;
+    limit: number;
+}
 
 const VersePage = (props: Props) => {
 
     const route = useRoute();
-    const [selectedBook, setBook] = useState<string | null>(null);
-    const [selectedChapter, setChapter] = useState<number | null>(null);
-    const [verse, setverse] = useState([])
+    const [selectedBookName, setBookName] = useState({
+        book: "",
+        limit: 0,
+    });
+    const [selectedBook, setBookNumber] = useState<number>(0);
+    const [selectedChapter, setChapter] = useState<number>(0);
+    const { Book, currentChapter, GetBibleByBookNumber } = useContext(BibleContext);
 
     console.log("mainlog", selectedBook, selectedChapter);
-    console.log(verse)
 
-   
+    const IncrementChapter = () => {
+        const chapter = selectedChapter + 1;
+        const chapterlimit = selectedBookName?.limit ?? 0
+        if (chapter > chapterlimit) {
+            console.log(true)
+            const newBookNum = selectedBook + 1;
+            console.log("newmmin", newBookNum)
+            const newBook = Bible.find(b => b.bookNumber === newBookNum);
+            const newBookName = newBook?.title
+            const newBookLimit = newBook?.limit
+            setBookName({
+                ...selectedBookName,
+                book: newBookName || "",
+                limit: newBookLimit || 0,
+            });
+            setBookNumber(newBookNum);
+            setChapter(1)
+            GetBibleByBookNumber(newBookNum, 1)
+        } else {
+            GetBibleByBookNumber(selectedBook, chapter)
+            setChapter(chapter);
+        }
+
+    }
+
+    const DecrementChapter = () => {
+        const newChapter = Math.max((selectedChapter ?? 1) - 1, 1);
+        console.log(newChapter)
+        GetBibleByBookNumber(selectedBook, newChapter);
+        setChapter(newChapter);
+    }
+
     useEffect(() => {
-        const { booknumber, book, selected } = route.params as VerseParams;
-        console.log("effect", book, booknumber)
-       
-        setBook(book); // Set the selected book as a string
-        setChapter(selected); // Set the selected chapter as a number
+        const { booknumber, book, selected, limit } = route.params as VerseParams;
+        console.log("effect", book, booknumber, selected)
+        GetBibleByBookNumber(booknumber, selected)
+        setBookName({
+            ...selectedBookName,
+            book: book,
+            limit: limit,
+        });
+        setBookNumber(booknumber);
+        setChapter(selected);
+
     }, [route.params]);
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.heading}>
                 <TouchableOpacity>
-                    <Icon name="left" size={width * 0.06} color="#000000" />
+                    <Icon name="left" onPress={DecrementChapter} size={width * 0.06} color="#000000" />
                 </TouchableOpacity>
-                <Text style={styles.headingText}>{selectedBook} {selectedChapter}</Text>
-                <TouchableOpacity>
+                <Text style={styles.headingText}>{selectedBookName?.book} {selectedChapter}</Text>
+                <TouchableOpacity onPress={IncrementChapter}>
                     <Icon name="right" size={width * 0.06} color="#000000" />
                 </TouchableOpacity>
             </View>
             <FlatList
-            style={styles.scroll}
-                data={verse}
-                keyExtractor={(item) => item.wordId.toString()} // Use a unique key for each item
+                style={styles.scroll}
+                data={Book}
+                keyExtractor={(item) => item.verseNum.toString()} 
                 renderItem={({ item }) => (
                     <View style={styles.verseContainer}>
-                        <View style={styles.verse}>
-                            <Text style={styles.versenum}>{item.verseNum}</Text>
-                            <Text style={styles.versetxt}>{item.word}</Text>
-                        </View>
+                        <TouchableWithoutFeedback onPress={()=>Presenter(selectedBook,selectedChapter,item.verseNum-1)}> 
+                            <View style={styles.verse}>
+                                <Text style={styles.versenum}>{item.verseNum}</Text>
+                                <Text style={styles.versetxt}>{item.word}</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                     </View>
                 )}
                 showsVerticalScrollIndicator={false}

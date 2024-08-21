@@ -40,7 +40,7 @@ const Collapse = ({ book, onClickFunction, expanded,navigation }) => {
               <TouchableOpacity
               key={index}
               onPress={() => {
-                navigation.navigate("VersePage", { booknumber:book.bookNumber,book: book.title, selected: chapter });
+                navigation.navigate("VersePage", { booknumber:book.bookNumber,book: book.title, selected: chapter,limit:book.limit });
               }}
               >
                 <View key={index} style={styles.chapterBox}>

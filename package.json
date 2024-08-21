@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-navigation/native": "^6.0.0",
     "@react-navigation/native-stack": "^6.7.0",
+    "axios": "^1.7.4",
     "react": "18.2.0",
     "react-native": "0.74.0",
     "react-native-collapsible": "^1.6.1",
