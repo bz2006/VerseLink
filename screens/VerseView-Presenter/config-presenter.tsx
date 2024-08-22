@@ -1,24 +1,50 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, TextInput, Button, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, TextInput, Image, TouchableWithoutFeedback } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RNCamera } from 'react-native-camera';
+import { ConnectionContext } from '../context/connectionContext';
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get('window');
+type RootStackParamList = {
+    Home: undefined;
+};
 
 const ConfigPresenter = () => {
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [isScannerActive, setScannerActive] = useState(false);
+    const [ipAddress, setIpAddress] = useState('');
+    const [port, setPort] = useState('');
+    const { Connect, connectionUrl, connectionStatus } = useContext(ConnectionContext);
 
-    const handleQRCodeData = (data) => {
+    useEffect(() => {
+        console.log("log", connectionStatus)
+        setPort(connectionUrl.split(':')[1])
+        setIpAddress(connectionUrl.split(':')[0])
+    }, [connectionUrl])
+
+
+    const handleQRCodeData = (data: string) => {
         console.log("QR Code Data:", data);
-        let urlObject = new URL(data);
-        let baseUrl = urlObject.origin;
-        console.log(baseUrl);
-        // Process the data here, e.g., navigate to another screen, make an API call, etc.
+        let remainder = data.split("://")[1];
+        let hostname = remainder.split(':')[0];
+        let port = remainder.split(':')[1].split('/')[0];
+        Connect(hostname + ":" + port)
+        setIpAddress(hostname)
+        setPort(port)
+        navigation.navigate("Home")
     };
 
-    const onSuccess = (e) => {
-        //setScannerActive(false); 
+    const HandleConnect = () => {
+        if (ipAddress && port) {
+            Connect(ipAddress + ":" + port)
+            navigation.navigate("Home")
+        }
+    }
+
+    const onSuccess = (e: any) => {
+        setScannerActive(false);
         handleQRCodeData(e.data); // Pass the scanned data to the handler function
     };
 
@@ -29,7 +55,7 @@ const ConfigPresenter = () => {
     const closeScanner = () => {
         setScannerActive(false);
     };
-
+    console.log(ipAddress, port)
     return (
         <SafeAreaView style={Camerastyles.safeArea}>
             <View style={headerstyles.header}>
@@ -38,7 +64,14 @@ const ConfigPresenter = () => {
                     <Icon name="qrcode-scan" size={28} color="#000" />
                 </TouchableWithoutFeedback>
             </View>
+
             <View style={styles.container}>
+
+                <View style={Imagestyles.container}>
+                    <Image source={require('./assets/VerseLink.png')} style={Imagestyles.image} />
+                    <Icon name="link-variant" size={25} color="#000" style={Imagestyles.icon} />
+                    <Image source={require('./assets/images.jpg')} style={Imagestyles.image} />
+                </View>
                 <View style={styles.content}>
                     <Text style={styles.title}>Connect to VerseView</Text>
                     <Text style={styles.description}>
@@ -47,19 +80,23 @@ const ConfigPresenter = () => {
                     <View style={styles.ipaddress}>
                         <Text style={styles.label}>IP Address:</Text>
                         <TextInput
+                            value={ipAddress}
                             style={styles.input}
+                            onChangeText={setIpAddress}
                             placeholder='Enter IP Address'
                         />
                     </View>
                     <View style={styles.portContainer}>
                         <Text style={styles.label}>Port:</Text>
                         <TextInput
+                            value={port}
+                            onChangeText={setPort}
                             placeholder='Enter Port'
                             style={styles.portInput}
                         />
                     </View>
-                    <TouchableOpacity style={Camerastyles.startButton} onPress={toggleScanner}>
-                        <Text style={Camerastyles.buttonText}>Connect</Text>
+                    <TouchableOpacity style={Camerastyles.startButton} onPress={HandleConnect}>
+                        <Text style={Camerastyles.buttonText}>{connectionStatus === true ? "Connected" : "Connect"}</Text>
                     </TouchableOpacity>
                 </View>
                 {isScannerActive && (
@@ -93,7 +130,6 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 20,
-        flex: 1,
         justifyContent: 'center',
     },
     title: {
@@ -113,6 +149,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     ipaddress: {
+        marginTop:20,
         marginBottom: 15,
     },
     portContainer: {
@@ -249,5 +286,22 @@ const headerstyles = StyleSheet.create({
         color: '#333',
     },
 })
+
+const Imagestyles = StyleSheet.create({
+    container: {
+        marginTop:70,
+        flexDirection: 'row',
+        justifyContent: "center", // Aligns items in a row
+        alignItems: 'center', // Aligns items vertically centered
+    },
+    image: {
+        width: 80,  // Set the desired width of the images
+        height: 80, // Set the desired height of the images
+        marginHorizontal: 8, // Adds space between images and the icon
+    },
+    icon: {
+        marginHorizontal: 8, // Adds space between the images and the icon
+    },
+});
 
 export default ConfigPresenter;

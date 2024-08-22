@@ -3,6 +3,7 @@ import { SafeAreaView, TouchableOpacity, ScrollView, StyleSheet, Text, View, Dim
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useRoute } from '@react-navigation/native';
 import { BibleContext } from '../context/bibleContext';
+import { ConnectionContext } from '../context/connectionContext';
 import { Bible } from '../Components/Books';
 import Presenter from "../VerseView-Presenter/presenter"
 
@@ -32,6 +33,7 @@ const VersePage = (props: Props) => {
     const [selectedBook, setBookNumber] = useState<number>(0);
     const [selectedChapter, setChapter] = useState<number>(0);
     const { Book, GetBibleByBookNumber } = useContext(BibleContext);
+    const {  Connect,connectionUrl,connectionStatus,PresentingData } = useContext(ConnectionContext);
 
     console.log("mainlog", selectedBook, selectedChapter);
 
@@ -81,6 +83,16 @@ const VersePage = (props: Props) => {
 
     }, [route.params]);
 
+    const HandlePresent = (book:number,Chapter:number,versenum:number) => {
+        if(connectionStatus===true){
+            const res = Bible.find(b => b.bookNumber === book);
+            const prbook = res?.title
+            Presenter(book,Chapter,versenum,connectionUrl)
+            PresentingData(`${prbook} ${Chapter}:${versenum+1}`)
+        }
+       
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.heading}>
@@ -98,7 +110,7 @@ const VersePage = (props: Props) => {
                 keyExtractor={(item) => item.verseNum.toString()} 
                 renderItem={({ item }) => (
                     <View style={styles.verseContainer}>
-                        <TouchableWithoutFeedback onPress={()=>Presenter(selectedBook,selectedChapter,item.verseNum-1)}> 
+                        <TouchableWithoutFeedback onPress={()=>HandlePresent(selectedBook,selectedChapter,item.verseNum-1)}> 
                             <View style={styles.verse}>
                                 <Text style={styles.versenum}>{item.verseNum}</Text>
                                 <Text style={styles.versetxt}>{item.word}</Text>

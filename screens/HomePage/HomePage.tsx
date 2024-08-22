@@ -1,20 +1,35 @@
-import React, { useState,useEffect } from 'react';
-import { SafeAreaView, StyleSheet, TextInput, Text, View } from 'react-native';
-import SQLite from 'react-native-sqlite-storage';
+import React, { useState,useContext } from 'react';
+import { SafeAreaView, StyleSheet, TextInput, Text, View,Dimensions,TouchableWithoutFeedback } from 'react-native';
 import BookCollapse from '../Components/BookCollapse';
+import { ConnectionContext } from '../context/connectionContext';
 import Header from '../Components/header';
+import ClosePresenter from '../VerseView-Presenter/close-presenter';
 
 type Props = {}
-
+const { width, height } = Dimensions.get('window');
 
 const HomePage = (props: Props) => {
     const [text, onChangeText] = useState('');
-
+    const { currentPresenting,PresentingData,connectionUrl } = useContext(ConnectionContext);
 
 
     return (
       <SafeAreaView style={styles.safeArea}>
-        <Header/>
+        <View style={headerstyles.header}>
+                <Text style={headerstyles.headerText}>VerseLink</Text>
+                {currentPresenting ? (
+                    <TouchableWithoutFeedback onPress={()=>{
+                        ClosePresenter(connectionUrl);
+                        PresentingData("")
+                    }}>
+                        <View style={headerstyles.present}>
+                            <Text style={headerstyles.presenttx}>{currentPresenting}</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                ) : (null)}
+
+
+            </View>
         
         <View style={styles.content}>
           <TextInput
@@ -53,5 +68,33 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+const headerstyles = StyleSheet.create({
+  present: {
+      padding: 6,
+      backgroundColor: '#228B22',
+      borderRadius: 10,
+      shadowColor: '#000',
+  },
+  presenttx: {
+      fontSize: width * 0.04,
+      color: '#fff',
+      fontWeight: 'bold',
+  },
+  header: {
+      width: '100%',
+      padding: 15,
+      backgroundColor: '#f8f8f8',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderBottomWidth: 0.5,
+      borderBottomColor: '#ccc',
+  },
+  headerText: {
+      fontSize: 25,
+      fontWeight: 'bold',
+      color: '#333',
+  },
+})
 
 export default HomePage;

@@ -10,11 +10,13 @@ const ConnectionProvider = ({ children }) => {
     const [currentPresenting, setcurrentPresenting] = useState("");
 
     const Connect = (url) => {
+        console.log("Connect",url)
         setconnectionStatus(true)
         setconnectionUrl(url)
     }
 
     const PresentingData = (value) => {
+        console.log(value)
         setcurrentPresenting(value)
     }
 

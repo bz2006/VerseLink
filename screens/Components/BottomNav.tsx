@@ -1,11 +1,19 @@
 // StickyBottomNav.js
 import React from 'react';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation ,NavigationProp } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+type RootStackParamList = {
+  Home: undefined;
+  SearchPage: undefined;
+  ConfigPresenter: undefined;
+  Settings: undefined;
+  // Add any other routes here
+};
 
 const StickyBottomNav = () => {
 
-    const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     // /onPress={() => { navigation.navigate("HomePage") }}
   return (
