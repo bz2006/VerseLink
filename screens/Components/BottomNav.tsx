@@ -13,10 +13,10 @@ const StickyBottomNav = () => {
       <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("Home") }}>
         <Text style={styles.buttonText}>Home</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("VersePage") }}>
+      <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("SearchPage") }}>
         <Text style={styles.buttonText}>Search</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("ConfigPresenter") }}>
         <Text style={styles.buttonText}>Connect</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button}>

@@ -31,7 +31,7 @@ const VersePage = (props: Props) => {
     });
     const [selectedBook, setBookNumber] = useState<number>(0);
     const [selectedChapter, setChapter] = useState<number>(0);
-    const { Book, currentChapter, GetBibleByBookNumber } = useContext(BibleContext);
+    const { Book, GetBibleByBookNumber } = useContext(BibleContext);
 
     console.log("mainlog", selectedBook, selectedChapter);
 

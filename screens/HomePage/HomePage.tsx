@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { SafeAreaView, StyleSheet, TextInput, Text, View } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 import BookCollapse from '../Components/BookCollapse';
+import Header from '../Components/header';
 
 type Props = {}
 
@@ -13,9 +14,7 @@ const HomePage = (props: Props) => {
 
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>VerseLink</Text>
-        </View>
+        <Header/>
         
         <View style={styles.content}>
           <TextInput
@@ -35,20 +34,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  header: {
-    width: '100%',
-    padding: 15,
-    backgroundColor: '#f8f8f8',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#ccc',
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
+  
   content: {
     flex: 1,
     alignItems: 'center',
