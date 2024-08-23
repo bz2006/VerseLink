@@ -92,6 +92,7 @@ const VersePage = (props: Props) => {
         }
        
     }
+    console.log(Book)
 
     return (
         <SafeAreaView style={styles.container}>

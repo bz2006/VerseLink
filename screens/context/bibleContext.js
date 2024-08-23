@@ -4,8 +4,8 @@ import SQLite from 'react-native-sqlite-storage';
 const BibleContext = createContext();
 const db = SQLite.openDatabase(
   {
-    name: 'kjv.db',
-    createFromLocation: "~www/kjv.db",
+    name: 'Bible_Mal.db',
+    createFromLocation: "~www/Bible_Mal.db",
     location: 'Library'
   },
   () => { console.log("Connected") },
