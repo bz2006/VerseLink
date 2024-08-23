@@ -29,7 +29,7 @@ const Collapse = ({ book, onClickFunction, expanded,navigation }) => {
             {book.title}
           </Text>
           <Text style={styles.arrow}>
-            {expanded ? <Icon name="up" size={20} color="#FFFFFF" /> : <Icon name="down" size={20} color="#FFFFFF" />}
+            {expanded ? <Icon name="up" size={20} color="#000000" /> : <Icon name="down" size={20} color="#000000" />}
           </Text>
         </View>
       </TouchableWithoutFeedback>
@@ -55,13 +55,13 @@ const Collapse = ({ book, onClickFunction, expanded,navigation }) => {
   );
 };
 
-const BookCollapse = ({ filterText }) => {
+const BookCollapse = ({ filterText}) => {
   const [expandedBookIndex, setExpandedBookIndex] = useState(null);
   const navigation = useNavigation();
   UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
 
-  const updateLayout = (index) => {
+  const updateLayout = (index:any) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedBookIndex(index === expandedBookIndex ? null : index);
   };
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   book: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#ffffff',
     paddingVertical: 15,
     paddingHorizontal: 20,
     flexDirection: 'row',
@@ -116,18 +116,18 @@ const styles = StyleSheet.create({
   },
   arrow: {
     fontSize: 20,
-    color: '#333',
+    color: '#000000',
   },
   bookTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#fff',
+    color: '#000000',
     textAlign: 'center',
   },
   chapterContainer: {
     paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#e9ecef',
+    backgroundColor: '#ffffff',
   },
   chaptersContainer: {
     flexDirection: 'row',
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   chapterBox: {
     width: 50,
     height: 50,
-    backgroundColor: '#CDCDCD',
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     borderRadius: 8,
     alignItems: 'center',

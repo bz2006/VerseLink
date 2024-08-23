@@ -26,7 +26,6 @@ const ConfigPresenter = () => {
 
 
     const handleQRCodeData = (data: string) => {
-        console.log("QR Code Data:", data);
         let remainder = data.split("://")[1];
         let hostname = remainder.split(':')[0];
         let port = remainder.split(':')[1].split('/')[0];
@@ -133,19 +132,19 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
-        fontSize: 24,
+        fontSize: width*0.07,
         fontWeight: 'bold',
         marginBottom: 10,
         textAlign: 'center',
     },
     description: {
-        fontSize: 16,
+        fontSize: width*0.045,
         marginBottom: 20,
         textAlign: 'center',
         color: '#555',
     },
     label: {
-        fontSize: 14,
+        fontSize: width*0.04,
         marginBottom: 5,
     },
     ipaddress: {
@@ -157,14 +156,14 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
+        borderColor: '#555',
+        padding: width*0.025,
         borderRadius: 5,
     },
     portInput: {
         borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
+        borderColor: '#555',
+        padding: width*0.025,
         borderRadius: 5,
     },
 });
@@ -175,14 +174,10 @@ const Camerastyles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
     },
     startButton: {
-        padding: width * 0.05,
+        padding: width*0.04,
+        width:"100%",
         backgroundColor: '#28a745',
         borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 5,
         marginTop: 20,
     },
     buttonText: {
@@ -295,12 +290,12 @@ const Imagestyles = StyleSheet.create({
         alignItems: 'center', // Aligns items vertically centered
     },
     image: {
-        width: 80,  // Set the desired width of the images
-        height: 80, // Set the desired height of the images
+        width: width * 0.20,  // Set the desired width of the images
+        height: width * 0.20, // Set the desired height of the images
         marginHorizontal: 8, // Adds space between images and the icon
     },
     icon: {
-        marginHorizontal: 8, // Adds space between the images and the icon
+        marginHorizontal: width * 0.05,
     },
 });
 

@@ -72,7 +72,7 @@ const SearchPage = (props: Props) => {
                     </TouchableWithoutFeedback>
                 ) : null}
             </View>
-            <View style={{ paddingHorizontal: 10, marginTop: 10 }}>
+            <View style={styles.content}>
                 <TextInput
                     style={styles.input}
                     onChangeText={onChangeText}
@@ -108,10 +108,10 @@ const SearchPage = (props: Props) => {
                 renderItem={({ item }) => (
                     <View style={styles.verseContainer}>
                         <TouchableWithoutFeedback onPress={() => HandlePresent(item.bookNum, item.chNum, item.verseNum - 1)}>
-                            <View>
-                                <Text style={styles.bkname}>{item.bookName} {item.chNum}</Text>
+                            <View >
+                                <Text style={styles.bkname}>{item.bookName} {item.chNum}:{item.verseNum}</Text>
                                 <View style={styles.verse}>
-                                    <Text style={styles.versenum}>{item.verseNum}</Text>
+                                    <Text style={styles.versenum}></Text>
                                     <Text style={styles.versetxt}>{item.word}</Text>
                                 </View>
                             </View>
@@ -140,13 +140,20 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 2,
     },
+    content: {
+        flex: 1,
+        alignItems: 'center',
+        padding: width*0.015,
+        paddingBottom: 60,
+      },
     dropdown: {
         position: 'absolute',
         top: 50,
         width: '100%',
         maxHeight: 200,
         backgroundColor: '#FFF',
-        borderRadius: 8,
+        borderBottomLeftRadius:8,
+        borderBottomRightRadius:8,
         zIndex: 1,
         elevation: 3,
         shadowColor: '#000',
@@ -175,6 +182,10 @@ const styles = StyleSheet.create({
     },
     verseContainer: {
         flex: 1,
+        borderRadius: 10,
+        padding:width*0.02,
+        backgroundColor: '#fff',
+        marginBottom: height * 0.01,
     },
     verse: {
         flexDirection: 'row',
@@ -185,16 +196,10 @@ const styles = StyleSheet.create({
     },
     versetxt: {
         fontSize: width * 0.045,
-        lineHeight: width * 0.055,
+        lineHeight: width * 0.075,
         color: '#000',
         flex: 1,
         flexWrap: 'wrap',
-    },
-    versenum: {
-        fontSize: width * 0.04,
-        fontWeight: 'bold',
-        color: '#777',
-        marginRight: width * 0.02,
     },
     bkname: {
         fontSize: width * 0.04,
@@ -202,9 +207,6 @@ const styles = StyleSheet.create({
         marginLeft: width * 0.01,
         marginBottom:-4
     },
-    break: {
-        height: 20, // Adjust the height as needed for spacing
-      },
 });
 
 const headerstyles = StyleSheet.create({
@@ -220,14 +222,14 @@ const headerstyles = StyleSheet.create({
     },
     header: {
         width: '100%',
-        padding: 10,
+        padding: width*0.035,
         backgroundColor: '#fff',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     headerText: {
-        fontSize: 28,
+        fontSize: width*0.06,
         fontWeight: 'bold',
         color: '#000',
     },

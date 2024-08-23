@@ -35,7 +35,6 @@ const VersePage = (props: Props) => {
     const { Book, GetBibleByBookNumber } = useContext(BibleContext);
     const {  Connect,connectionUrl,connectionStatus,PresentingData } = useContext(ConnectionContext);
 
-    console.log("mainlog", selectedBook, selectedChapter);
 
     const IncrementChapter = () => {
         const chapter = selectedChapter + 1;
@@ -92,7 +91,6 @@ const VersePage = (props: Props) => {
         }
        
     }
-    console.log(Book)
 
     return (
         <SafeAreaView style={styles.container}>
@@ -160,7 +158,7 @@ const styles = StyleSheet.create({
     },
     versetxt: {
         fontSize: width * 0.05,
-        lineHeight: width * 0.06,
+        lineHeight: width * 0.075,
         color: '#000000',
         flex: 1,
         flexWrap: 'wrap',

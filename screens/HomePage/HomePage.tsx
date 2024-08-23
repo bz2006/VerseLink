@@ -82,7 +82,7 @@ const headerstyles = StyleSheet.create({
   },
   header: {
       width: '100%',
-      padding: 15,
+      padding: width*0.035,
       backgroundColor: '#f8f8f8',
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -91,7 +91,7 @@ const headerstyles = StyleSheet.create({
       borderBottomColor: '#ccc',
   },
   headerText: {
-      fontSize: 25,
+      fontSize: width*0.06,
       fontWeight: 'bold',
       color: '#333',
   },
