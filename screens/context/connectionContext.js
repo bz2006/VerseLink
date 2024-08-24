@@ -10,9 +10,13 @@ const ConnectionProvider = ({ children }) => {
     const [currentPresenting, setcurrentPresenting] = useState("");
 
     const Connect = (url) => {
-        console.log("Connect",url)
         setconnectionStatus(true)
         setconnectionUrl(url)
+    }
+
+    const Disconnect = () => {
+        setconnectionStatus(false)
+        setconnectionUrl("")
     }
 
     const PresentingData = (value) => {
@@ -24,6 +28,7 @@ const ConnectionProvider = ({ children }) => {
 
         <ConnectionContext.Provider value={{
             Connect,
+            Disconnect,
             connectionUrl,
             connectionStatus,
             currentPresenting, 

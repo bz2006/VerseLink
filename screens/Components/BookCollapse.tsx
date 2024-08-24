@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   bookTitle: {
-    fontSize: 18,
+    fontSize: width*0.04,
     fontWeight: '600',
     color: '#000000',
     textAlign: 'center',

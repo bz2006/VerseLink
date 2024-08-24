@@ -9,6 +9,7 @@ import { BibleProvider } from './screens/context/bibleContext';
 import SearchPage from './screens/SearchPage/SearchPage';
 import ConfigPresenter from './screens/VerseView-Presenter/config-presenter';
 import { ConnectionProvider } from './screens/context/connectionContext';
+import SplashScreen from 'react-native-splash-screen';
 enableScreens()
 // Define the navigation stack param list
 type RootStackParamList = {
@@ -25,6 +26,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App() {
 
   useEffect(() => {
+    SplashScreen.hide()
   }, [])
 
 

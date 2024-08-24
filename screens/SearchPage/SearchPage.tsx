@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Text, View, TextInput, StyleSheet, SafeAreaView, FlatList, TouchableWithoutFeedback, Dimensions, TouchableOpacity, Keyboard } from 'react-native';
+import { Text, View, TextInput, StyleSheet, SafeAreaView, FlatList, TouchableWithoutFeedback, Dimensions, TouchableOpacity, Keyboard, ScrollView } from 'react-native';
 import { BibleContext } from '../context/bibleContext';
 import { Bible } from '../Components/Books';
+import Icon from 'react-native-vector-icons/AntDesign';
 import { ConnectionContext } from '../context/connectionContext';
 import Presenter from '../VerseView-Presenter/presenter';
 import ClosePresenter from '../VerseView-Presenter/close-presenter';
@@ -12,18 +13,23 @@ const { width, height } = Dimensions.get('window');
 
 const SearchPage = (props: Props) => {
     const [text, onChangeText] = useState('');
+    const [searchtext, setsearchtext] = useState('');
     const [searchData, setSearchData] = useState([]);
+    const [isFiltered, setisFiltered] = useState(false)
     const [showDropdown, setShowDropdown] = useState(false);
-    const { SearchResults, SearchBible } = useContext(BibleContext);
+    const { SearchResults, SearchBible, bookNames, SearchBiblebyBook } = useContext(BibleContext);
     const { currentPresenting, connectionUrl, connectionStatus, PresentingData } = useContext(ConnectionContext);
 
     const [isSelectingFromDropdown, setIsSelectingFromDropdown] = useState(false);
 
+    
+
     const handleSearch = () => {
         gindic(text, (words) => {
             SearchBible(words[1][0][1][0])
-            console.log(words[1][0][1][0]);
+            setsearchtext(words[1][0][1][0])
         });
+        setShowDropdown(false)
     };
 
     useEffect(() => {
@@ -41,11 +47,12 @@ const SearchPage = (props: Props) => {
     }, [text]);
 
     const handleAutocompleteSelection = (selectedText) => {
+        setShowDropdown(false);
         setIsSelectingFromDropdown(true);
         onChangeText(selectedText);
         setSearchData([]);
-        setShowDropdown(false);
-        Keyboard.dismiss();
+        
+        //Keyboard.dismiss();
     };
 
     const HandlePresent = (book, Chapter, versenum) => {
@@ -57,8 +64,10 @@ const SearchPage = (props: Props) => {
         }
     };
 
+
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#F0F0F0' }}>
+        <SafeAreaView style={{ backgroundColor: '#F0F0F0' }}>
+
             <View style={headerstyles.header}>
                 <Text style={headerstyles.headerText}>VerseLink</Text>
                 {currentPresenting ? (
@@ -73,15 +82,22 @@ const SearchPage = (props: Props) => {
                 ) : null}
             </View>
             <View style={styles.content}>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={onChangeText}
-                    value={text}
-                    placeholder="Search Book"
-                    returnKeyType="search"
-                    onSubmitEditing={handleSearch}
-                    onFocus={() => setShowDropdown(true)}
-                />
+
+                <View style={textInStyeles.container}>
+                    <TextInput
+                        style={textInStyeles.input}
+                        onChangeText={onChangeText}
+                        value={text}
+                        placeholder="Search Book"
+                        returnKeyType="search"
+                        onSubmitEditing={handleSearch}
+                        onFocus={() => setShowDropdown(true)}
+                    />
+                    <View style={textInStyeles.close}>
+                        <Icon name="closecircle" onPress={()=>onChangeText("")} size={width * 0.05} color="grey" />
+                    </View>
+                </View>
+
                 {showDropdown && searchData.length > 0 && (
                     <View style={styles.dropdown}>
                         <FlatList
@@ -101,6 +117,33 @@ const SearchPage = (props: Props) => {
                     </View>
                 )}
             </View>
+
+            <View style={scrollStyles.container}>
+                <ScrollView
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ flexGrow: 1 }} // Ensures ScrollView takes up available space
+                >
+                    {bookNames.map((book, index) => (
+                        <TouchableWithoutFeedback key={index} onPress={() => {
+                            SearchBiblebyBook(searchtext, book);
+                            setisFiltered(true)
+                        }}>
+                            <View style={scrollStyles.button}>
+                                <Text style={scrollStyles.buttonText}>{book}</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    ))}
+                </ScrollView>
+                {isFiltered === true ? (
+                         <Icon name="closecircle" style={scrollStyles.fixedButton} onPress={() => {
+                        SearchBible(searchtext);
+                        setisFiltered(false)
+                    }} size={width * 0.04} color="grey" />
+                    
+                ) : null}
+            </View>
+
             <FlatList
                 style={styles.scroll}
                 data={SearchResults}
@@ -111,7 +154,6 @@ const SearchPage = (props: Props) => {
                             <View >
                                 <Text style={styles.bkname}>{item.bookName} {item.chNum}:{item.verseNum}</Text>
                                 <View style={styles.verse}>
-                                    <Text style={styles.versenum}></Text>
                                     <Text style={styles.versetxt}>{item.word}</Text>
                                 </View>
                             </View>
@@ -126,34 +168,75 @@ const SearchPage = (props: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
-    input: {
-        height: 45,
-        margin: 5,
-        borderRadius: 8,
-        backgroundColor: '#FFFFFF',
-        padding: 10,
+const textInStyeles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        justifyContent: "space-between",
         width: '100%',
+        backgroundColor: "#FFFFFF",
         elevation: 2,
+        borderRadius: 8,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
     },
+    input: {
+        height: 50,
+        backgroundColor: "transparent",
+        padding: 10,
+        width: '90%',
+    },
+    close: {
+        marginRight: 15,
+        justifyContent:"center",
+        alignItems:"center"
+    }
+})
+
+const scrollStyles = StyleSheet.create({
+    container: {
+        flexDirection: 'row', // Align children horizontally
+        justifyContent: 'space-between', // Distribute space between children
+        padding: 8,
+        marginTop: -8,
+        paddingBottom: 5,
+    },
+    button: {
+        borderRadius: 7,
+        justifyContent: "center",
+        paddingHorizontal: 5,
+        overflow: 'hidden',
+        marginRight: 5,
+    },
+    buttonText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    fixedButton: {
+        backgroundColor: '#FFFFFF', // Background color of the button
+        padding: 10, // Padding of the button
+        borderRadius: 10, // Border radius of the button
+    },
+    fixedButtonText: {
+        color: '#000', // Text color of the button
+    },
+})
+const styles = StyleSheet.create({
+
+
     content: {
-        flex: 1,
         alignItems: 'center',
-        padding: width*0.015,
-        paddingBottom: 60,
-      },
+        padding: width * 0.015,
+    },
     dropdown: {
         position: 'absolute',
         top: 50,
         width: '100%',
         maxHeight: 200,
-        backgroundColor: '#FFF',
-        borderBottomLeftRadius:8,
-        borderBottomRightRadius:8,
+        backgroundColor: '#FFFFFF',
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
         zIndex: 1,
         elevation: 3,
         shadowColor: '#000',
@@ -183,7 +266,7 @@ const styles = StyleSheet.create({
     verseContainer: {
         flex: 1,
         borderRadius: 10,
-        padding:width*0.02,
+        padding: width * 0.02,
         backgroundColor: '#fff',
         marginBottom: height * 0.01,
     },
@@ -192,7 +275,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         padding: 5,
         borderRadius: 10,
-        marginBottom:5
+        marginBottom: 5
     },
     versetxt: {
         fontSize: width * 0.045,
@@ -205,7 +288,7 @@ const styles = StyleSheet.create({
         fontSize: width * 0.04,
         color: '#777',
         marginLeft: width * 0.01,
-        marginBottom:-4
+        marginBottom: -4
     },
 });
 
@@ -222,14 +305,15 @@ const headerstyles = StyleSheet.create({
     },
     header: {
         width: '100%',
-        padding: width*0.035,
+        padding: width * 0.035,
         backgroundColor: '#fff',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginBottom: -15
     },
     headerText: {
-        fontSize: width*0.06,
+        fontSize: width * 0.05,
         fontWeight: 'bold',
         color: '#000',
     },

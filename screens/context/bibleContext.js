@@ -16,6 +16,7 @@ const BibleProvider = ({ children }) => {
 
   const [Book, setBook] = useState([]);
   const [SearchResults, setSearchResults] = useState([]);
+  const [bookNames, setBookNames] = useState([]);
 
   const GetBibleByBookNumber = async (bookNumber, chapternumber) => {
     try {
@@ -56,6 +57,9 @@ const BibleProvider = ({ children }) => {
               searchData.push(rows.item(i));
             }
             setSearchResults(searchData);
+            const extractedBookNames = searchData.map(result => result.bookName);
+            const distinctBookNames = Array.from(new Set(extractedBookNames));
+            setBookNames(distinctBookNames);
             console.log("Search completed successfully");
           },
           (tx, error) => {
@@ -68,13 +72,41 @@ const BibleProvider = ({ children }) => {
     }
   };
 
+  const SearchBiblebyBook = async (searchTerm, book) => {
+    try {
+      await db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM words WHERE word LIKE ? AND bookName = ?',
+          [`%${searchTerm}%`, book],
+          (_, { rows }) => {
+            const searchData = [];
+            for (let i = 0; i < rows.length; i++) {
+              searchData.push(rows.item(i));
+            }
+            setSearchResults(searchData);
+  
+            console.log("Search completed successfully");
+          },
+          (tx, error) => {
+            console.log('Error querying data:', error.message);
+          }
+        );
+      });
+    } catch (error) {
+      console.log('Error searching data:', error.message);
+    }
+  };
+  
+
   return (
 
     <BibleContext.Provider value={{
       Book,
       GetBibleByBookNumber,
       SearchResults,
-      SearchBible
+      bookNames,
+      SearchBible,
+      SearchBiblebyBook
     }}>
       {children}
     </BibleContext.Provider>

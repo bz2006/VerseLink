@@ -16,10 +16,9 @@ const ConfigPresenter = () => {
     const [isScannerActive, setScannerActive] = useState(false);
     const [ipAddress, setIpAddress] = useState('');
     const [port, setPort] = useState('');
-    const { Connect, connectionUrl, connectionStatus } = useContext(ConnectionContext);
+    const { Connect, Disconnect, connectionUrl, connectionStatus } = useContext(ConnectionContext);
 
     useEffect(() => {
-        console.log("log", connectionStatus)
         setPort(connectionUrl.split(':')[1])
         setIpAddress(connectionUrl.split(':')[0])
     }, [connectionUrl])
@@ -36,9 +35,13 @@ const ConfigPresenter = () => {
     };
 
     const HandleConnect = () => {
-        if (ipAddress && port) {
-            Connect(ipAddress + ":" + port)
-            navigation.navigate("Home")
+        if (connectionStatus === false) {
+            if (ipAddress && port) {
+                Connect(ipAddress + ":" + port)
+                navigation.navigate("Home")
+            }
+        }else{
+            Disconnect()
         }
     }
 
@@ -60,7 +63,7 @@ const ConfigPresenter = () => {
             <View style={headerstyles.header}>
                 <Text style={headerstyles.headerText}>VerseLink</Text>
                 <TouchableWithoutFeedback onPress={toggleScanner}>
-                    <Icon name="qrcode-scan" size={28} color="#000" />
+                    <Icon name="qrcode-scan" size={width * 0.06} color="#000" />
                 </TouchableWithoutFeedback>
             </View>
 
@@ -68,7 +71,7 @@ const ConfigPresenter = () => {
 
                 <View style={Imagestyles.container}>
                     <Image source={require('./assets/VerseLink.png')} style={Imagestyles.image} />
-                    <Icon name="link-variant" size={25} color="#000" style={Imagestyles.icon} />
+                    <Icon name="link-variant" size={width * 0.06} color="#000" style={Imagestyles.icon} />
                     <Image source={require('./assets/images.jpg')} style={Imagestyles.image} />
                 </View>
                 <View style={styles.content}>
@@ -94,8 +97,17 @@ const ConfigPresenter = () => {
                             style={styles.portInput}
                         />
                     </View>
-                    <TouchableOpacity style={Camerastyles.startButton} onPress={HandleConnect}>
-                        <Text style={Camerastyles.buttonText}>{connectionStatus === true ? "Connected" : "Connect"}</Text>
+                    <TouchableOpacity
+                        disabled={false}
+                        style={[
+                            Camerastyles.startButton,
+                            { backgroundColor: connectionStatus === true ? 'red' : 'green' }
+                        ]}
+                        onPress={HandleConnect}
+                    >
+                        <Text style={Camerastyles.buttonText}>
+                            {connectionStatus === true ? 'Disconnect' : 'Connect'}
+                        </Text>
                     </TouchableOpacity>
                 </View>
                 {isScannerActive && (
@@ -132,23 +144,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
-        fontSize: width*0.07,
+        fontSize: width * 0.06,
         fontWeight: 'bold',
         marginBottom: 10,
         textAlign: 'center',
     },
     description: {
-        fontSize: width*0.045,
+        fontSize: width * 0.035,
         marginBottom: 20,
         textAlign: 'center',
         color: '#555',
     },
     label: {
-        fontSize: width*0.04,
+        fontSize: width * 0.04,
         marginBottom: 5,
     },
     ipaddress: {
-        marginTop:20,
+        marginTop: 20,
         marginBottom: 15,
     },
     portContainer: {
@@ -157,13 +169,13 @@ const styles = StyleSheet.create({
     input: {
         borderWidth: 1,
         borderColor: '#555',
-        padding: width*0.025,
+        padding: width * 0.025,
         borderRadius: 5,
     },
     portInput: {
         borderWidth: 1,
         borderColor: '#555',
-        padding: width*0.025,
+        padding: width * 0.025,
         borderRadius: 5,
     },
 });
@@ -174,9 +186,9 @@ const Camerastyles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
     },
     startButton: {
-        padding: width*0.04,
-        width:"100%",
-        backgroundColor: '#28a745',
+        padding: width * 0.04,
+        width: "100%",
+        backgroundColor: '#00770d',
         borderRadius: 8,
         marginTop: 20,
     },
@@ -267,24 +279,22 @@ const Camerastyles = StyleSheet.create({
 const headerstyles = StyleSheet.create({
     header: {
         width: '100%',
-        padding: 15,
-        backgroundColor: '#f8f8f8',
+        padding: width * 0.035,
+        backgroundColor: '#fff',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#ccc',
     },
     headerText: {
-        fontSize: 25,
+        fontSize: width * 0.05,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#000',
     },
 })
 
 const Imagestyles = StyleSheet.create({
     container: {
-        marginTop:70,
+        marginTop: 70,
         flexDirection: 'row',
         justifyContent: "center", // Aligns items in a row
         alignItems: 'center', // Aligns items vertically centered

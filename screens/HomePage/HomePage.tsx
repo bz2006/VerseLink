@@ -91,7 +91,7 @@ const headerstyles = StyleSheet.create({
       borderBottomColor: '#ccc',
   },
   headerText: {
-      fontSize: width*0.06,
+      fontSize: width*0.05,
       fontWeight: 'bold',
       color: '#333',
   },
