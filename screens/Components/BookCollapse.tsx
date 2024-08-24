@@ -72,7 +72,10 @@ const BookCollapse = ({ filterText}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContainer}>
         {filteredContent.map((book, index) => (
           <Collapse
             key={index}

@@ -178,7 +178,7 @@ const textInStyeles = StyleSheet.create({
         borderRadius: 8,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.1,
         shadowRadius: 2,
     },
     input: {
@@ -205,7 +205,9 @@ const scrollStyles = StyleSheet.create({
     button: {
         borderRadius: 7,
         justifyContent: "center",
-        paddingHorizontal: 5,
+        paddingHorizontal: width * 0.02,
+        paddingVertical:width * 0.02,
+        backgroundColor:"#FFFFFF",
         overflow: 'hidden',
         marginRight: 5,
     },
@@ -293,7 +295,7 @@ const styles = StyleSheet.create({
 });
 
 const headerstyles = StyleSheet.create({
-    present: {
+        present: {
         padding: 8,
         backgroundColor: '#006400',
         borderRadius: 10,
@@ -310,7 +312,6 @@ const headerstyles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: -15
     },
     headerText: {
         fontSize: width * 0.05,

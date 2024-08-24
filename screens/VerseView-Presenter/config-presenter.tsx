@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, TextInput, Image, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, TextInput, Image, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RNCamera } from 'react-native-camera';
@@ -40,7 +40,7 @@ const ConfigPresenter = () => {
                 Connect(ipAddress + ":" + port)
                 navigation.navigate("Home")
             }
-        }else{
+        } else {
             Disconnect()
         }
     }
@@ -60,77 +60,79 @@ const ConfigPresenter = () => {
     console.log(ipAddress, port)
     return (
         <SafeAreaView style={Camerastyles.safeArea}>
-            <View style={headerstyles.header}>
-                <Text style={headerstyles.headerText}>VerseLink</Text>
-                <TouchableWithoutFeedback onPress={toggleScanner}>
-                    <Icon name="qrcode-scan" size={width * 0.06} color="#000" />
-                </TouchableWithoutFeedback>
-            </View>
-
-            <View style={styles.container}>
-
-                <View style={Imagestyles.container}>
-                    <Image source={require('./assets/VerseLink.png')} style={Imagestyles.image} />
-                    <Icon name="link-variant" size={width * 0.06} color="#000" style={Imagestyles.icon} />
-                    <Image source={require('./assets/images.jpg')} style={Imagestyles.image} />
+            <ScrollView>
+                <View style={headerstyles.header}>
+                    <Text style={headerstyles.headerText}>VerseLink</Text>
+                    <TouchableWithoutFeedback onPress={toggleScanner}>
+                        <Icon name="qrcode-scan" size={width * 0.06} color="#000" />
+                    </TouchableWithoutFeedback>
                 </View>
-                <View style={styles.content}>
-                    <Text style={styles.title}>Connect to VerseView</Text>
-                    <Text style={styles.description}>
-                        Connect to control your presentations seamlessly. Please enter the IP Address and Port number of VerseView remote to establish a connection.
-                    </Text>
-                    <View style={styles.ipaddress}>
-                        <Text style={styles.label}>IP Address:</Text>
-                        <TextInput
-                            value={ipAddress}
-                            style={styles.input}
-                            onChangeText={setIpAddress}
-                            placeholder='Enter IP Address'
-                        />
+
+                <View style={styles.container}>
+
+                    <View style={Imagestyles.container}>
+                        <Image source={require('./assets/VerseLink.png')} style={Imagestyles.image} />
+                        <Icon name="link-variant" size={width * 0.07} color="#000" style={Imagestyles.icon} />
+                        <Image source={require('./assets/images.jpg')} style={Imagestyles.image} />
                     </View>
-                    <View style={styles.portContainer}>
-                        <Text style={styles.label}>Port:</Text>
-                        <TextInput
-                            value={port}
-                            onChangeText={setPort}
-                            placeholder='Enter Port'
-                            style={styles.portInput}
-                        />
-                    </View>
-                    <TouchableOpacity
-                        disabled={false}
-                        style={[
-                            Camerastyles.startButton,
-                            { backgroundColor: connectionStatus === true ? 'red' : 'green' }
-                        ]}
-                        onPress={HandleConnect}
-                    >
-                        <Text style={Camerastyles.buttonText}>
-                            {connectionStatus === true ? 'Disconnect' : 'Connect'}
+                    <View style={styles.content}>
+                        <Text style={styles.title}>Connect to VerseView</Text>
+                        <Text style={styles.description}>
+                            Connect to control your presentations seamlessly. Please enter the IP Address and Port number of VerseView remote to establish a connection.
                         </Text>
-                    </TouchableOpacity>
-                </View>
-                {isScannerActive && (
-                    <View style={Camerastyles.scannerWrapper}>
-                        <QRCodeScanner
-                            onRead={onSuccess}
-                            flashMode={RNCamera.Constants.FlashMode.off}
-                            containerStyle={Camerastyles.scannerContainer}
-                        />
-                        <TouchableOpacity style={Camerastyles.closeButton} onPress={closeScanner}>
-                            <Icon name="close" size={35} color="#FFFFFF" />
+                        <View style={styles.ipaddress}>
+                            <Text style={styles.label}>IP Address:</Text>
+                            <TextInput
+                                value={ipAddress}
+                                style={styles.input}
+                                onChangeText={setIpAddress}
+                                placeholder='Enter IP Address'
+                            />
+                        </View>
+                        <View style={styles.portContainer}>
+                            <Text style={styles.label}>Port:</Text>
+                            <TextInput
+                                value={port}
+                                onChangeText={setPort}
+                                placeholder='Enter Port'
+                                style={styles.portInput}
+                            />
+                        </View>
+                        <TouchableOpacity
+                            disabled={false}
+                            style={[
+                                Camerastyles.startButton,
+                                { backgroundColor: connectionStatus === true ? '#bd0000' : '#007118' }
+                            ]}
+                            onPress={HandleConnect}
+                        >
+                            <Text style={Camerastyles.buttonText}>
+                                {connectionStatus === true ? 'Disconnect' : 'Connect'}
+                            </Text>
                         </TouchableOpacity>
-                        <View style={Camerastyles.overlayContainer}>
-                            <View style={Camerastyles.overlay}>
-                                <View style={Camerastyles.cornerTopLeft} />
-                                <View style={Camerastyles.cornerTopRight} />
-                                <View style={Camerastyles.cornerBottomLeft} />
-                                <View style={Camerastyles.cornerBottomRight} />
+                    </View>
+                    {isScannerActive && (
+                        <View style={Camerastyles.scannerWrapper}>
+                            <QRCodeScanner
+                                onRead={onSuccess}
+                                flashMode={RNCamera.Constants.FlashMode.off}
+                                containerStyle={Camerastyles.scannerContainer}
+                            />
+                            <TouchableOpacity style={Camerastyles.closeButton} onPress={closeScanner}>
+                                <Icon name="close" size={35} color="#FFFFFF" />
+                            </TouchableOpacity>
+                            <View style={Camerastyles.overlayContainer}>
+                                <View style={Camerastyles.overlay}>
+                                    <View style={Camerastyles.cornerTopLeft} />
+                                    <View style={Camerastyles.cornerTopRight} />
+                                    <View style={Camerastyles.cornerBottomLeft} />
+                                    <View style={Camerastyles.cornerBottomRight} />
+                                </View>
                             </View>
                         </View>
-                    </View>
-                )}
-            </View>
+                    )}
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };
@@ -146,7 +148,8 @@ const styles = StyleSheet.create({
     title: {
         fontSize: width * 0.06,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginTop: width * 0.01,
+        marginBottom: width * 0.01,
         textAlign: 'center',
     },
     description: {
@@ -168,13 +171,13 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 1,
-        borderColor: '#555',
+        borderColor: '#dddddd',
         padding: width * 0.025,
         borderRadius: 5,
     },
     portInput: {
         borderWidth: 1,
-        borderColor: '#555',
+        borderColor: '#dddddd',
         padding: width * 0.025,
         borderRadius: 5,
     },
