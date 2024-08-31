@@ -3,10 +3,13 @@ import { Text, View, TextInput, StyleSheet, SafeAreaView, FlatList, TouchableWit
 import { BibleContext } from '../context/bibleContext';
 import { Bible } from '../Components/Books';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { SettingsContext } from '../context/settingsContext';
+import { darkMode, lightMode } from '../Components/ColorSchema';
 import { ConnectionContext } from '../context/connectionContext';
 import Presenter from '../VerseView-Presenter/presenter';
 import ClosePresenter from '../VerseView-Presenter/close-presenter';
 import gindic from './Translator';
+import StickyBottomNav from '../Components/BottomNav';
 
 type Props = {};
 const { width, height } = Dimensions.get('window');
@@ -21,13 +24,21 @@ const SearchPage = (props: Props) => {
     const { currentPresenting, connectionUrl, connectionStatus, PresentingData } = useContext(ConnectionContext);
 
     const [isSelectingFromDropdown, setIsSelectingFromDropdown] = useState(false);
+    const { ColorTheme } = useContext(SettingsContext);
 
-    
+    let textColor = ColorTheme === 'light' ? lightMode.color : darkMode.color
+    let bgColor = ColorTheme === 'light' ? lightMode.backgroundColor : darkMode.backgroundColor
+    let bg2 = ColorTheme === 'light' ? lightMode.backgroundColor2 : darkMode.backgroundColor2
+    let bg3 = ColorTheme === 'light' ? lightMode.backgroundColor3 : darkMode.backgroundColor3
+    //style={[styles.container, { backgroundColor: bgColor }]}
+
+
 
     const handleSearch = () => {
         gindic(text, (words) => {
-            SearchBible(words[1][0][1][0])
-            setsearchtext(words[1][0][1][0])
+            let str = words[1][0][1][0].replace(/\s+$/, '');
+            SearchBible(str)
+            setsearchtext(str)
         });
         setShowDropdown(false)
     };
@@ -51,7 +62,7 @@ const SearchPage = (props: Props) => {
         setIsSelectingFromDropdown(true);
         onChangeText(selectedText);
         setSearchData([]);
-        
+
         //Keyboard.dismiss();
     };
 
@@ -66,10 +77,10 @@ const SearchPage = (props: Props) => {
 
 
     return (
-        <SafeAreaView style={{ backgroundColor: '#F0F0F0' }}>
+        <SafeAreaView style={{ backgroundColor: bg2 }}>
 
-            <View style={headerstyles.header}>
-                <Text style={headerstyles.headerText}>VerseLink</Text>
+            <View style={[headerstyles.header, { backgroundColor: bgColor }]}>
+                <Text style={[headerstyles.headerText, { color: textColor }]}>VerseLink</Text>
                 {currentPresenting ? (
                     <TouchableWithoutFeedback onPress={() => {
                         ClosePresenter(connectionUrl);
@@ -83,30 +94,31 @@ const SearchPage = (props: Props) => {
             </View>
             <View style={styles.content}>
 
-                <View style={textInStyeles.container}>
+                <View style={[textInStyeles.container, { backgroundColor: bgColor }]}>
                     <TextInput
-                        style={textInStyeles.input}
+                        style={[textInStyeles.input, { color: textColor, backgroundColor: bgColor }]}
                         onChangeText={onChangeText}
                         value={text}
                         placeholder="Search Book"
+                        placeholderTextColor={textColor}
                         returnKeyType="search"
                         onSubmitEditing={handleSearch}
                         onFocus={() => setShowDropdown(true)}
                     />
                     <View style={textInStyeles.close}>
-                        <Icon name="closecircle" onPress={()=>onChangeText("")} size={width * 0.05} color="grey" />
+                        <Icon name="closecircle" onPress={() => { onChangeText(""); setShowDropdown(false) }} size={width * 0.04} color="grey" />
                     </View>
                 </View>
 
                 {showDropdown && searchData.length > 0 && (
-                    <View style={styles.dropdown}>
+                    <View style={[styles.dropdown, {backgroundColor: bgColor }]}>
                         <FlatList
                             data={searchData}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({ item }) => (
                                 <TouchableOpacity onPress={() => handleAutocompleteSelection(item)}>
                                     <View style={styles.autocompleteItem}>
-                                        <Text style={styles.autocompleteText}>{item}</Text>
+                                        <Text style={[styles.autocompleteText, {color: textColor }]}>{item}</Text>
                                     </View>
                                 </TouchableOpacity>
                             )}
@@ -129,18 +141,18 @@ const SearchPage = (props: Props) => {
                             SearchBiblebyBook(searchtext, book);
                             setisFiltered(true)
                         }}>
-                            <View style={scrollStyles.button}>
-                                <Text style={scrollStyles.buttonText}>{book}</Text>
+                            <View style={[scrollStyles.button, {backgroundColor: bgColor }]}>
+                                <Text style={[scrollStyles.buttonText, {color: textColor }]}>{book}</Text>
                             </View>
                         </TouchableWithoutFeedback>
                     ))}
                 </ScrollView>
                 {isFiltered === true ? (
-                         <Icon name="closecircle" style={scrollStyles.fixedButton} onPress={() => {
+                    <Icon name="closecircle"style={[scrollStyles.fixedButton, {backgroundColor: bg2 }]} onPress={() => {
                         SearchBible(searchtext);
                         setisFiltered(false)
                     }} size={width * 0.04} color="grey" />
-                    
+
                 ) : null}
             </View>
 
@@ -149,12 +161,12 @@ const SearchPage = (props: Props) => {
                 data={SearchResults}
                 keyExtractor={(item) => item.wordId.toString()}
                 renderItem={({ item }) => (
-                    <View style={styles.verseContainer}>
+                    <View style={[styles.verseContainer, {backgroundColor: bgColor }]}>
                         <TouchableWithoutFeedback onPress={() => HandlePresent(item.bookNum, item.chNum, item.verseNum - 1)}>
                             <View >
-                                <Text style={styles.bkname}>{item.bookName} {item.chNum}:{item.verseNum}</Text>
+                                <Text style={[styles.bkname, {color: textColor }]}>{item.bookName} {item.chNum}:{item.verseNum}</Text>
                                 <View style={styles.verse}>
-                                    <Text style={styles.versetxt}>{item.word}</Text>
+                                    <Text style={[styles.versetxt, {color: textColor }]}>{item.word}</Text>
                                 </View>
                             </View>
                         </TouchableWithoutFeedback>
@@ -189,8 +201,8 @@ const textInStyeles = StyleSheet.create({
     },
     close: {
         marginRight: 15,
-        justifyContent:"center",
-        alignItems:"center"
+        justifyContent: "center",
+        alignItems: "center"
     }
 })
 
@@ -199,29 +211,24 @@ const scrollStyles = StyleSheet.create({
         flexDirection: 'row', // Align children horizontally
         justifyContent: 'space-between', // Distribute space between children
         padding: 8,
-        marginTop: -8,
+        marginTop: -5,
         paddingBottom: 5,
+        marginBottom: 10
     },
     button: {
         borderRadius: 7,
         justifyContent: "center",
         paddingHorizontal: width * 0.02,
-        paddingVertical:width * 0.02,
-        backgroundColor:"#FFFFFF",
+        paddingVertical: width * 0.02,
         overflow: 'hidden',
         marginRight: 5,
     },
     buttonText: {
         fontSize: 16,
-        color: '#333',
     },
-    fixedButton: {
-        backgroundColor: '#FFFFFF', // Background color of the button
+    fixedButton: { // Background color of the button
         padding: 10, // Padding of the button
         borderRadius: 10, // Border radius of the button
-    },
-    fixedButtonText: {
-        color: '#000', // Text color of the button
     },
 })
 const styles = StyleSheet.create({
@@ -236,7 +243,6 @@ const styles = StyleSheet.create({
         top: 50,
         width: '100%',
         maxHeight: 200,
-        backgroundColor: '#FFFFFF',
         borderBottomLeftRadius: 8,
         borderBottomRightRadius: 8,
         zIndex: 1,
@@ -256,10 +262,9 @@ const styles = StyleSheet.create({
     },
     autocompleteText: {
         fontSize: 16,
-        color: '#333',
     },
     scroll: {
-        marginBottom: height * 0.05,
+        marginBottom: height * 0.21,
         paddingHorizontal: 10,
     },
     flatListContent: {
@@ -269,7 +274,6 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 10,
         padding: width * 0.02,
-        backgroundColor: '#fff',
         marginBottom: height * 0.01,
     },
     verse: {
@@ -282,20 +286,18 @@ const styles = StyleSheet.create({
     versetxt: {
         fontSize: width * 0.045,
         lineHeight: width * 0.075,
-        color: '#000',
         flex: 1,
         flexWrap: 'wrap',
     },
     bkname: {
         fontSize: width * 0.04,
-        color: '#777',
         marginLeft: width * 0.01,
         marginBottom: -4
     },
 });
 
 const headerstyles = StyleSheet.create({
-        present: {
+    present: {
         padding: 8,
         backgroundColor: '#006400',
         borderRadius: 10,
@@ -308,7 +310,6 @@ const headerstyles = StyleSheet.create({
     header: {
         width: '100%',
         padding: width * 0.035,
-        backgroundColor: '#fff',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -316,7 +317,6 @@ const headerstyles = StyleSheet.create({
     headerText: {
         fontSize: width * 0.05,
         fontWeight: 'bold',
-        color: '#000',
     },
 });
 

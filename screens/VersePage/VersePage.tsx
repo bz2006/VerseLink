@@ -6,6 +6,7 @@ import { BibleContext } from '../context/bibleContext';
 import { ConnectionContext } from '../context/connectionContext';
 import { Bible } from '../Components/Books';
 import Presenter from "../VerseView-Presenter/presenter"
+import StickyBottomNav from '../Components/BottomNav';
 
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');

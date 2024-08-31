@@ -1,31 +1,36 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { SettingsContext } from '../context/settingsContext';
+import { darkMode,lightMode } from './ColorSchema';
 
 type RootStackParamList = {
   Home: undefined;
   SearchPage: undefined;
   ConfigPresenter: undefined;
-  Settings: undefined;
-  // Add any other routes here
+  SettingsPage: undefined;
 };
 
 const StickyBottomNav = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { ColorTheme } = useContext(SettingsContext);
+
+  let textColor = ColorTheme === 'light' ? lightMode.color : darkMode.color
+  let bgColor = ColorTheme === 'light' ? lightMode.backgroundColor : darkMode.backgroundColor
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("Home") }}>
-        <Text style={styles.buttonText}>Home</Text>
+    <View style={[styles.container, { backgroundColor: bgColor }]}>
+      <TouchableOpacity  style={[styles.button, { backgroundColor: bgColor }]} onPress={() => { navigation.navigate("Home") }}>
+        <Text style={[styles.buttonText, { color: textColor }]}>Home</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("SearchPage") }}>
-        <Text style={styles.buttonText}>Search</Text>
+      <TouchableOpacity style={[styles.button, { backgroundColor: bgColor }]} onPress={() => { navigation.navigate("SearchPage") }}>
+        <Text style={[styles.buttonText, { color: textColor }]}>Search</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("ConfigPresenter") }}>
-        <Text style={styles.buttonText}>Connect</Text>
+      <TouchableOpacity style={[styles.button, { backgroundColor: bgColor }]} onPress={() => { navigation.navigate("ConfigPresenter") }}>
+        <Text style={[styles.buttonText, { color: textColor }]}>Connect</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Settings</Text>
+      <TouchableOpacity style={[styles.button, { backgroundColor: bgColor }]} onPress={() => { navigation.navigate("SettingsPage") }}>
+        <Text style={[styles.buttonText, { color: textColor }]}>Settings</Text>
       </TouchableOpacity>
     </View>
   );
@@ -37,9 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     height: 50,
-    backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderTopColor: '#ddd',
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -54,12 +57,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center', // Center the content vertically
     alignItems: 'center',
-    paddingVertical: 10, // Add padding inside the button
-    backgroundColor: "#FFFFFF"
+    paddingVertical: 10, 
   },
   buttonText: {
     fontSize: 16,
-    color: '#333',
   },
 });
 

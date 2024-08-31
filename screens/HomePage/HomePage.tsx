@@ -1,8 +1,9 @@
 import React, { useState,useContext } from 'react';
 import { SafeAreaView, StyleSheet, TextInput, Text, View,Dimensions,TouchableWithoutFeedback } from 'react-native';
 import BookCollapse from '../Components/BookCollapse';
+import { SettingsContext } from '../context/settingsContext';
 import { ConnectionContext } from '../context/connectionContext';
-import Header from '../Components/header';
+import { darkMode,lightMode } from '../Components/ColorSchema';
 import ClosePresenter from '../VerseView-Presenter/close-presenter';
 
 type Props = {}
@@ -11,36 +12,39 @@ const { width, height } = Dimensions.get('window');
 const HomePage = (props: Props) => {
     const [text, onChangeText] = useState('');
     const { currentPresenting,PresentingData,connectionUrl } = useContext(ConnectionContext);
+    const { ColorTheme } = useContext(SettingsContext);
 
-
+    let textColor = ColorTheme === 'light' ? lightMode.color : darkMode.color
+    let bgColor = ColorTheme === 'light' ? lightMode.backgroundColor : darkMode.backgroundColor
+    let bg2= ColorTheme === 'light' ? lightMode.backgroundColor2 : darkMode.backgroundColor2
+    let bg3= ColorTheme === 'light' ? lightMode.backgroundColor3 : darkMode.backgroundColor3
+//style={[styles.container, { backgroundColor: bgColor }]}
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={headerstyles.header}>
-                <Text style={headerstyles.headerText}>VerseLink</Text>
+        <View style={[headerstyles.header, { backgroundColor: bgColor }]}>
+                <Text style={[headerstyles.headerText, { color: textColor }]}>VerseLink</Text>
                 {currentPresenting ? (
-                    <TouchableWithoutFeedback onPress={()=>{
+                    <TouchableWithoutFeedback onPress={() => {
                         ClosePresenter(connectionUrl);
-                        PresentingData("")
+                        PresentingData("");
                     }}>
                         <View style={headerstyles.present}>
                             <Text style={headerstyles.presenttx}>{currentPresenting}</Text>
                         </View>
                     </TouchableWithoutFeedback>
-                ) : (null)}
-
-
+                ) : null}
             </View>
         
-        <View style={styles.content}>
+        <View style={[styles.content, { backgroundColor: bg2 }]}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: bg3,color:textColor }]}
             onChangeText={onChangeText}
             value={text}
             placeholder="Search Book"
+            placeholderTextColor={textColor} 
           />
           <BookCollapse filterText={text}/>
         </View>
-        
       </SafeAreaView>
     );
 }
@@ -57,12 +61,11 @@ const styles = StyleSheet.create({
     paddingBottom: 60, // Add padding for the bottom nav
   },
   input: {
-    height: 40,
+    height: 50,
     margin: 5,
-    borderRadius: 4,
-    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
     padding: 10,
-    width: '95%',
+    width: '97%',
   },
   bookCollapse: {
     width: '100%',

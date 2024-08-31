@@ -10,13 +10,16 @@ import SearchPage from './screens/SearchPage/SearchPage';
 import ConfigPresenter from './screens/VerseView-Presenter/config-presenter';
 import { ConnectionProvider } from './screens/context/connectionContext';
 import SplashScreen from 'react-native-splash-screen';
+import SettingsPage from './screens/Settings/settings';
+import { SettingsProvider } from './screens/context/settingsContext';
 enableScreens()
 // Define the navigation stack param list
 type RootStackParamList = {
   Home: undefined;  // No params expected
   VersePage: undefined;
   SearchPage: undefined;
-  ConfigPresenter: undefined; // Added Verse here
+  ConfigPresenter: undefined;
+  SettingsPage: undefined; // Added Verse here
 };
 
 // Create a Stack navigator
@@ -33,15 +36,18 @@ export default function App() {
   return (
     <BibleProvider>
       <ConnectionProvider>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen name="Home" component={HomePage} options={{ headerShown: false }} />
-            <Stack.Screen name="VersePage" component={VersePage} options={{ headerShown: false }} />
-            <Stack.Screen name="SearchPage" component={SearchPage} options={{ headerShown: false }} />
-            <Stack.Screen name="ConfigPresenter" component={ConfigPresenter} options={{ headerShown: false }} />
-          </Stack.Navigator>
-          <StickyBottomNav />
-        </NavigationContainer>
+        <SettingsProvider>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName="Home">
+              <Stack.Screen name="Home" component={HomePage} options={{ headerShown: false }} />
+              <Stack.Screen name="VersePage" component={VersePage} options={{ headerShown: false }} />
+              <Stack.Screen name="SearchPage" component={SearchPage} options={{ headerShown: false }} />
+              <Stack.Screen name="ConfigPresenter" component={ConfigPresenter} options={{ headerShown: false }} />
+              <Stack.Screen name="SettingsPage" component={SettingsPage} options={{ headerShown: false }} />
+            </Stack.Navigator>
+            <StickyBottomNav />
+          </NavigationContainer>
+        </SettingsProvider>
       </ConnectionProvider>
     </BibleProvider>
   );

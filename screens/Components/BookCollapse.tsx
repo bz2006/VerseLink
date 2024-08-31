@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {
   SafeAreaView,
@@ -13,6 +13,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Bible } from './Books';
+import { SettingsContext } from '../context/settingsContext';
+import { darkMode,lightMode } from './ColorSchema';
 import { useNavigation } from '@react-navigation/native'; 
 
 
@@ -21,20 +23,29 @@ const { width } = Dimensions.get('window');
 
 
 const Collapse = ({ book, onClickFunction, expanded,navigation }) => {
+
+  const { ColorTheme } = useContext(SettingsContext);
+
+  let textColor = ColorTheme === 'light' ? lightMode.color : darkMode.color
+  let bgColor = ColorTheme === 'light' ? lightMode.backgroundColor : darkMode.backgroundColor
+  let bg2= ColorTheme === 'light' ? lightMode.backgroundColor2 : darkMode.backgroundColor2
+
+
+
   return (
-    <View style={styles.bookContainer}>
+    <View style={[styles.bookContainer, { backgroundColor: bgColor }]}>
       <TouchableWithoutFeedback onPress={onClickFunction}>
-        <View style={styles.book}>
-          <Text style={styles.bookTitle}>
+        <View style={[styles.book, { backgroundColor: bgColor }]}>
+          <Text style={[styles.bookTitle, { color: textColor }]}>
             {book.title}
           </Text>
           <Text style={styles.arrow}>
-            {expanded ? <Icon name="up" size={20} color="#000000" /> : <Icon name="down" size={20} color="#000000" />}
+            {expanded ? <Icon name="up" size={20} color={textColor} /> : <Icon name="down" size={20} color={textColor} />}
           </Text>
         </View>
       </TouchableWithoutFeedback>
       {expanded && (
-        <View style={styles.chapterContainer}>
+        <View style={[styles.chapterContainer, { backgroundColor: bgColor }]}>
           <View style={styles.chaptersContainer}>
             {book.chapters.map((chapter: number, index: any) => (
               <TouchableOpacity
@@ -43,8 +54,8 @@ const Collapse = ({ book, onClickFunction, expanded,navigation }) => {
                 navigation.navigate("VersePage", { booknumber:book.bookNumber,book: book.title, selected: chapter,limit:book.limit });
               }}
               >
-                <View key={index} style={styles.chapterBox}>
-                  <Text style={styles.chapterText}>{chapter}</Text>
+                <View key={index}style={[styles.chapterBox, { backgroundColor: bg2 }]}>
+                  <Text style={[styles.chapterText, { color: textColor }]}>{chapter}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -56,6 +67,9 @@ const Collapse = ({ book, onClickFunction, expanded,navigation }) => {
 };
 
 const BookCollapse = ({ filterText}) => {
+  const { ColorTheme } = useContext(SettingsContext);
+  let bg2= ColorTheme === 'light' ? lightMode.backgroundColor2 : darkMode.backgroundColor2
+
   const [expandedBookIndex, setExpandedBookIndex] = useState(null);
   const navigation = useNavigation();
   UIManager.setLayoutAnimationEnabledExperimental &&
@@ -71,7 +85,7 @@ const BookCollapse = ({ filterText}) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: bg2 }]} >
       <ScrollView
        showsVerticalScrollIndicator={false}
        showsHorizontalScrollIndicator={false}
@@ -95,7 +109,6 @@ export default BookCollapse;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
   },
   scrollContainer: {
     paddingVertical: 10,
@@ -105,13 +118,11 @@ const styles = StyleSheet.create({
   bookContainer: {
     width: width * 0.95,
     marginBottom: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: '#fff',
     elevation: 3,
   },
   book: {
-    backgroundColor: '#ffffff',
     paddingVertical: 15,
     paddingHorizontal: 20,
     flexDirection: 'row',
@@ -119,18 +130,15 @@ const styles = StyleSheet.create({
   },
   arrow: {
     fontSize: 20,
-    color: '#000000',
   },
   bookTitle: {
     fontSize: width*0.04,
     fontWeight: '600',
-    color: '#000000',
     textAlign: 'center',
   },
   chapterContainer: {
     paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#ffffff',
   },
   chaptersContainer: {
     flexDirection: 'row',
@@ -141,7 +149,6 @@ const styles = StyleSheet.create({
   chapterBox: {
     width: 50,
     height: 50,
-    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     borderRadius: 8,
     alignItems: 'center',
@@ -150,6 +157,5 @@ const styles = StyleSheet.create({
   chapterText: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#333',
   },
 });

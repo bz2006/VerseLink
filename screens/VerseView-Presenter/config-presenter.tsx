@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RNCamera } from 'react-native-camera';
 import { ConnectionContext } from '../context/connectionContext';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
+import StickyBottomNav from '../Components/BottomNav';
 
 const { width, height } = Dimensions.get('window');
 type RootStackParamList = {
@@ -60,13 +61,14 @@ const ConfigPresenter = () => {
     console.log(ipAddress, port)
     return (
         <SafeAreaView style={Camerastyles.safeArea}>
-            <ScrollView>
-                <View style={headerstyles.header}>
+            <View style={headerstyles.header}>
                     <Text style={headerstyles.headerText}>VerseLink</Text>
                     <TouchableWithoutFeedback onPress={toggleScanner}>
                         <Icon name="qrcode-scan" size={width * 0.06} color="#000" />
                     </TouchableWithoutFeedback>
                 </View>
+            <ScrollView>
+                
 
                 <View style={styles.container}>
 
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
         color: '#555',
     },
     label: {
-        fontSize: width * 0.04,
+        fontSize: width * 0.03,
         marginBottom: 5,
     },
     ipaddress: {
@@ -174,12 +176,14 @@ const styles = StyleSheet.create({
         borderColor: '#dddddd',
         padding: width * 0.025,
         borderRadius: 5,
+        color:"#000000"
     },
     portInput: {
         borderWidth: 1,
         borderColor: '#dddddd',
         padding: width * 0.025,
         borderRadius: 5,
+        color:"#000000"
     },
 });
 
@@ -187,6 +191,7 @@ const Camerastyles = StyleSheet.create({
     safeArea: {
         flex: 1,
         backgroundColor: '#f5f5f5',
+        marginBottom:60
     },
     startButton: {
         padding: width * 0.04,
@@ -194,6 +199,7 @@ const Camerastyles = StyleSheet.create({
         backgroundColor: '#00770d',
         borderRadius: 8,
         marginTop: 20,
+        
     },
     buttonText: {
         fontSize: width * 0.04,
