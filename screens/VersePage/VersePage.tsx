@@ -4,9 +4,10 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useRoute } from '@react-navigation/native';
 import { BibleContext } from '../context/bibleContext';
 import { ConnectionContext } from '../context/connectionContext';
+import { SettingsContext } from '../context/settingsContext';
+import { lightMode, darkMode } from '../Components/ColorSchema';
 import { Bible } from '../Components/Books';
 import Presenter from "../VerseView-Presenter/presenter"
-import StickyBottomNav from '../Components/BottomNav';
 
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');
@@ -34,7 +35,14 @@ const VersePage = (props: Props) => {
     const [selectedBook, setBookNumber] = useState<number>(0);
     const [selectedChapter, setChapter] = useState<number>(0);
     const { Book, GetBibleByBookNumber } = useContext(BibleContext);
-    const {  Connect,connectionUrl,connectionStatus,PresentingData } = useContext(ConnectionContext);
+    const { Connect, connectionUrl, connectionStatus, PresentingData } = useContext(ConnectionContext);
+    const { ColorTheme,fontSize } = useContext(SettingsContext);
+
+    let textColor = ColorTheme === 'light' ? lightMode.color : darkMode.color
+    let textColor2 = ColorTheme === 'light' ? lightMode.color2 : darkMode.color2
+    let bgColor = ColorTheme === 'light' ? lightMode.backgroundColor : darkMode.backgroundColor
+    let bg2 = ColorTheme === 'light' ? lightMode.backgroundColor2 : darkMode.backgroundColor2
+    let bg3 = ColorTheme === 'light' ? lightMode.backgroundColor3 : darkMode.backgroundColor3
 
 
     const IncrementChapter = () => {
@@ -83,44 +91,44 @@ const VersePage = (props: Props) => {
 
     }, [route.params]);
 
-    const HandlePresent = (book:number,Chapter:number,versenum:number) => {
-        if(connectionStatus===true){
+    const HandlePresent = (book: number, Chapter: number, versenum: number) => {
+        if (connectionStatus === true) {
             const res = Bible.find(b => b.bookNumber === book);
             const prbook = res?.title
-            Presenter(book,Chapter,versenum,connectionUrl)
-            PresentingData(`${prbook} ${Chapter}:${versenum+1}`)
+            Presenter(book, Chapter, versenum, connectionUrl)
+            PresentingData(`${prbook} ${Chapter}:${versenum + 1}`)
         }
-       
+
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
             <View style={styles.heading}>
                 <TouchableOpacity>
-                    <Icon name="left" onPress={DecrementChapter} size={width * 0.06} color="#000000" />
+                    <Icon name="left" onPress={DecrementChapter} size={width * 0.06} color={textColor} />
                 </TouchableOpacity>
-                <Text style={styles.headingText}>{selectedBookName?.book} {selectedChapter}</Text>
+                <Text style={[styles.headingText, { color: textColor }]}>{selectedBookName?.book} {selectedChapter}</Text>
                 <TouchableOpacity onPress={IncrementChapter}>
-                    <Icon name="right" size={width * 0.06} color="#000000" />
+                    <Icon name="right" size={width * 0.06} color={textColor} />
                 </TouchableOpacity>
             </View>
-            <FlatList
-                style={styles.scroll}
-                data={Book}
-                keyExtractor={(item) => item.verseNum.toString()} 
-                renderItem={({ item }) => (
-                    <View style={styles.verseContainer}>
-                        <TouchableWithoutFeedback onPress={()=>HandlePresent(selectedBook,selectedChapter,item.verseNum-1)}> 
-                            <View style={styles.verse}>
-                                <Text style={styles.versenum}>{item.verseNum}</Text>
-                                <Text style={styles.versetxt}>{item.word}</Text>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                )}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-            />
+                <FlatList
+                    style={styles.scroll}
+                    data={Book}
+                    keyExtractor={(item) => item.verseNum.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.verseContainer}>
+                            <TouchableWithoutFeedback onPress={() => HandlePresent(selectedBook, selectedChapter, item.verseNum - 1)}>
+                                <View style={[styles.verse, { backgroundColor: bgColor }]}>
+                                    <Text style={[styles.versenum, { color: textColor2,fontSize:fontSize-3  }]}>{item.verseNum}</Text>
+                                    <Text style={[styles.versetxt, { color: textColor,fontSize:fontSize }]}>{item.word}</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    )}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                />
         </SafeAreaView>
     )
 }
@@ -128,7 +136,6 @@ const VersePage = (props: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
         padding: width * 0.01,
     },
     scroll: {
@@ -144,7 +151,6 @@ const styles = StyleSheet.create({
     headingText: {
         fontSize: width * 0.07,
         fontWeight: 'bold',
-        color: '#333',
     },
     verseContainer: {
         flex: 1,
@@ -154,20 +160,14 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         padding: width * 0.03,
         borderRadius: 10,
-        backgroundColor: '#fff',
-        marginBottom: height * 0.01,
     },
     versetxt: {
-        fontSize: width * 0.05,
         lineHeight: width * 0.075,
-        color: '#000000',
         flex: 1,
         flexWrap: 'wrap',
     },
     versenum: {
-        fontSize: width * 0.04,
         fontWeight: 'bold',
-        color: '#777',
         marginRight: width * 0.02,
     }
 });

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect ,useContext} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { enableScreens } from 'react-native-screens'
@@ -12,6 +12,9 @@ import { ConnectionProvider } from './screens/context/connectionContext';
 import SplashScreen from 'react-native-splash-screen';
 import SettingsPage from './screens/Settings/settings';
 import { SettingsProvider } from './screens/context/settingsContext';
+import { View } from 'react-native';
+import { SettingsContext } from './screens/context/settingsContext';
+import { darkMode,lightMode } from './screens/Components/ColorSchema';
 enableScreens()
 // Define the navigation stack param list
 type RootStackParamList = {
@@ -27,7 +30,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // Define the main App component
 export default function App() {
-
   useEffect(() => {
     SplashScreen.hide()
   }, [])

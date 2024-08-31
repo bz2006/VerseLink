@@ -43,6 +43,32 @@ const BibleProvider = ({ children }) => {
     }
   };
 
+  const GetBibleByBookNumberRaw = async (bookNumber, chapternumber) => {
+    try {
+      console.log(bookNumber, chapternumber)
+      await db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM words WHERE bookNum = ? AND chNum=?',
+          [bookNumber, chapternumber],
+          (_, { rows }) => {
+            console.log("Bible Get successful");
+            const searchData = [];
+            for (let i = 0; i < rows.length; i++) {
+              searchData.push(rows.item(i));
+            }
+            setSearchResults(searchData);
+          },
+          (tx, error) => {
+            console.log('Error querying data:', error);
+          }
+        );
+      });
+    } catch (error) {
+      console.log('Error querying data:', error);
+    }
+  };
+
+
   const SearchBible = async (searchTerm) => {
     try {
       console.log(`Searching for: ${searchTerm}`);
@@ -106,6 +132,7 @@ const BibleProvider = ({ children }) => {
       SearchResults,
       bookNames,
       SearchBible,
+      GetBibleByBookNumberRaw,
       SearchBiblebyBook
     }}>
       {children}

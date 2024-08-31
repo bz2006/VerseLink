@@ -4,6 +4,8 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RNCamera } from 'react-native-camera';
 import { ConnectionContext } from '../context/connectionContext';
+import { darkMode,lightMode } from '../Components/ColorSchema';
+import { SettingsContext } from '../context/settingsContext';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import StickyBottomNav from '../Components/BottomNav';
 
@@ -18,6 +20,13 @@ const ConfigPresenter = () => {
     const [ipAddress, setIpAddress] = useState('');
     const [port, setPort] = useState('');
     const { Connect, Disconnect, connectionUrl, connectionStatus } = useContext(ConnectionContext);
+    const { ColorTheme } = useContext(SettingsContext);
+
+    let textColor = ColorTheme === 'light' ? lightMode.color : darkMode.color
+    let bgColor = ColorTheme === 'light' ? lightMode.backgroundColor : darkMode.backgroundColor
+    let bg2= ColorTheme === 'light' ? lightMode.backgroundColor2 : darkMode.backgroundColor2
+    let bg3= ColorTheme === 'light' ? lightMode.backgroundColor3 : darkMode.backgroundColor3
+//style={[styles.container, { backgroundColor: bgColor }]}
 
     useEffect(() => {
         setPort(connectionUrl.split(':')[1])
@@ -60,11 +69,11 @@ const ConfigPresenter = () => {
     };
     console.log(ipAddress, port)
     return (
-        <SafeAreaView style={Camerastyles.safeArea}>
-            <View style={headerstyles.header}>
-                    <Text style={headerstyles.headerText}>VerseLink</Text>
+        <SafeAreaView style={[Camerastyles.safeArea, { backgroundColor: bgColor }]}>
+            <View style={[headerstyles.header, { backgroundColor: bgColor, }]}>
+                    <Text style={[headerstyles.headerText, { color: textColor }]}>VerseLink</Text>
                     <TouchableWithoutFeedback onPress={toggleScanner}>
-                        <Icon name="qrcode-scan" size={width * 0.06} color="#000" />
+                        <Icon name="qrcode-scan" size={width * 0.06} color={textColor} />
                     </TouchableWithoutFeedback>
                 </View>
             <ScrollView>
@@ -78,26 +87,28 @@ const ConfigPresenter = () => {
                         <Image source={require('./assets/images.jpg')} style={Imagestyles.image} />
                     </View>
                     <View style={styles.content}>
-                        <Text style={styles.title}>Connect to VerseView</Text>
-                        <Text style={styles.description}>
+                        <Text style={[styles.title, { color: textColor }]}>Connect to VerseView</Text>
+                        <Text style={[styles.description, { color: textColor }]}>
                             Connect to control your presentations seamlessly. Please enter the IP Address and Port number of VerseView remote to establish a connection.
                         </Text>
                         <View style={styles.ipaddress}>
-                            <Text style={styles.label}>IP Address:</Text>
+                            <Text  style={[styles.label, { color: textColor }]}>IP Address</Text>
                             <TextInput
                                 value={ipAddress}
-                                style={styles.input}
+                                style={[styles.input, { color: textColor }]}
                                 onChangeText={setIpAddress}
+                                placeholderTextColor={textColor}
                                 placeholder='Enter IP Address'
                             />
                         </View>
                         <View style={styles.portContainer}>
-                            <Text style={styles.label}>Port:</Text>
+                            <Text style={[styles.label, { color: textColor }]}>Port</Text>
                             <TextInput
                                 value={port}
                                 onChangeText={setPort}
                                 placeholder='Enter Port'
-                                style={styles.portInput}
+                                placeholderTextColor={textColor}
+                                style={[styles.portInput, { color: textColor }]}
                             />
                         </View>
                         <TouchableOpacity
@@ -108,7 +119,7 @@ const ConfigPresenter = () => {
                             ]}
                             onPress={HandleConnect}
                         >
-                            <Text style={Camerastyles.buttonText}>
+                            <Text style={[Camerastyles.buttonText, { color: "#FFFFFF"}]}>
                                 {connectionStatus === true ? 'Disconnect' : 'Connect'}
                             </Text>
                         </TouchableOpacity>
@@ -190,20 +201,17 @@ const styles = StyleSheet.create({
 const Camerastyles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
-        marginBottom:60
+        marginBottom:height*0.055
     },
     startButton: {
         padding: width * 0.04,
         width: "100%",
-        backgroundColor: '#00770d',
         borderRadius: 8,
         marginTop: 20,
         
     },
     buttonText: {
         fontSize: width * 0.04,
-        color: '#FFF',
         fontWeight: 'bold',
         textAlign: 'center',
     },
@@ -289,7 +297,6 @@ const headerstyles = StyleSheet.create({
     header: {
         width: '100%',
         padding: width * 0.035,
-        backgroundColor: '#fff',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -297,7 +304,6 @@ const headerstyles = StyleSheet.create({
     headerText: {
         fontSize: width * 0.05,
         fontWeight: 'bold',
-        color: '#000',
     },
 })
 
@@ -311,7 +317,8 @@ const Imagestyles = StyleSheet.create({
     image: {
         width: width * 0.20,  // Set the desired width of the images
         height: width * 0.20, // Set the desired height of the images
-        marginHorizontal: 8, // Adds space between images and the icon
+        marginHorizontal: 8,
+        borderRadius:18 // Adds space between images and the icon
     },
     icon: {
         marginHorizontal: width * 0.05,
